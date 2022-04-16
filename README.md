@@ -32,7 +32,12 @@
 - You can Run `docker ps ` to verify that the container is running on your local docker engine
 - Open your browser and go to (http://localhost:9090/api-docs.html) you should see swagger api doc page
 
-### Notes On Testing using PostMan Collection 
+### Testing 
+
+**PostMan Collection** 
+[Download TestApp postman collection](TestApp.postman_collection.json)
+
+**Note when using the above collection** 
 
 There are two important variables that you need to set 
 
