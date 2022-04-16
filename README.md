@@ -32,4 +32,14 @@
 - You can Run `docker ps ` to verify that the container is running on your local docker engine
 - Open your browser and go to (http://localhost:9090/api-docs.html) you should see swagger api doc page
 
-## How to test the functionalities 
+### Notes On Testing using PostMan Collection 
+
+There are two important variables that you need to set 
+
+1. **port** , If you are testing it using the docker container : set it to 9090 (i.e the value which you passed for the contaner in above sample startup comand)
+     else if you are trying to run the app from the source set port variable to 8080 
+     
+2. **staffUUIDHeaderVal** most api calls requires you to passs staffUUID , so you can execute /staff/findAll or /staff/create api's to find a valid staffUUID 
+copy this valid value and set it to staffUUIDHeaderVal postman collection variable
+
+
