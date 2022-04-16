@@ -29,6 +29,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     implementation 'org.modelmapper:modelmapper:2.4.5'
     implementation 'net.sf.supercsv:super-csv:2.4.0'
+    implementation 'org.flywaydb:flyway-core'
     annotationProcessor 'org.projectlombok:lombok'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

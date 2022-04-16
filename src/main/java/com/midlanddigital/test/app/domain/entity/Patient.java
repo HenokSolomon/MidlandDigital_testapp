@@ -21,7 +21,6 @@ public class Patient {
     private int PatientId;
 
     @Column(name = "uuid")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
 
     @Column(name = "name")

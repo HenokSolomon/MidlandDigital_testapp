@@ -19,21 +19,21 @@ import java.time.format.DateTimeFormatter;
 @ControllerAdvice
 public class ErrorHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( ErrorHandler.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorHandler.class);
 
     @ExceptionHandler(ServiceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleServiceError(ServiceException ex, WebRequest request) {
 
-        LOGGER.error( "TestAppErrorHandler ErrorHandler handleServiceError ", ex );
+        LOGGER.error("TestAppErrorHandler ErrorHandler handleServiceError ", ex);
 
         return ErrorResponse.builder()
-                .timestamp( LocalDateTime.now().format( DateTimeFormatter.ISO_DATE ) )
-                .status( HttpStatus.BAD_REQUEST.value() )
-                .error( "bad request , please fix your request and try again" )
-                .message( ex.getMessage() )
-                .path( ((ServletWebRequest) request).getRequest().getRequestURI() )
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("bad request , please fix your request and try again")
+                .message(ex.getMessage())
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
                 .build();
     }
 
@@ -43,14 +43,14 @@ public class ErrorHandler {
     @ResponseBody
     public ErrorResponse handleUnknownError(Exception ex, WebRequest request) {
 
-        LOGGER.error( "TestAppErrorHandler ErrorHandler handleUnknownError ", ex );
+        LOGGER.error("TestAppErrorHandler ErrorHandler handleUnknownError ", ex);
 
         return ErrorResponse.builder()
-                .timestamp( LocalDateTime.now().format( DateTimeFormatter.ISO_DATE ) )
-                .status( HttpStatus.INTERNAL_SERVER_ERROR.value() )
-                .error( "Unknown internal server error" )
-                .message( "sorry we encountered unknown issue while processing your request , please try again latter" )
-                .path( ((ServletWebRequest) request).getRequest().getRequestURI() )
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Unknown internal server error")
+                .message("sorry we encountered unknown issue while processing your request , please try again latter")
+                .path(((ServletWebRequest) request).getRequest().getRequestURI())
                 .build();
     }
 

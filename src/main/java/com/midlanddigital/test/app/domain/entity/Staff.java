@@ -21,7 +21,6 @@ public class Staff {
     private int StaffId;
 
     @Column(name = "uuid")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
 
     @Column(name = "name")

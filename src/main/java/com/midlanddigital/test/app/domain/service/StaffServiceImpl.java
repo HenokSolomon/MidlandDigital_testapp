@@ -7,15 +7,17 @@ import com.midlanddigital.test.app.dto.StaffDto;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import static com.midlanddigital.test.app.Constants.dateFormat;
+import static com.midlanddigital.test.app.Constants.dateTimeStringPattern;
+
 @Service
 public class StaffServiceImpl implements StaffService {
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private final StaffRepository staffRepository;
 
@@ -37,6 +39,7 @@ public class StaffServiceImpl implements StaffService {
         //prepare entity
         Staff staff = Staff.builder()
                 .name(name)
+                .uuid(UUID.randomUUID())
                 .registrationDate(LocalDateTime.now())
                 .build();
 
@@ -46,13 +49,13 @@ public class StaffServiceImpl implements StaffService {
         return StaffDto.builder()
                 .name(newStaff.getName())
                 .uuid(newStaff.getUuid())
-                .registrationDate(dateFormat.format(newStaff.getRegistrationDate()))
+                .registrationDate(newStaff.getRegistrationDate().format(DateTimeFormatter.ofPattern(dateTimeStringPattern)))
                 .build();
 
     }
 
     @Override
-    public StaffDto updateStaff(UUID uuid , String name) throws ServiceException {
+    public StaffDto updateStaff(UUID uuid, String name) throws ServiceException {
 
         //validate uuid is not empty
         if (uuid == null) {
@@ -75,16 +78,20 @@ public class StaffServiceImpl implements StaffService {
         return StaffDto.builder()
                 .name(updatedStaff.getName())
                 .uuid(updatedStaff.getUuid())
-                .registrationDate(dateFormat.format(updatedStaff.getRegistrationDate()))
+                .registrationDate(updatedStaff.getRegistrationDate().format(DateTimeFormatter.ofPattern(dateTimeStringPattern)))
                 .build();
 
+    }
+
+    public List<Staff> findAll() {
+        return staffRepository.findAll();
     }
 
     public Staff validateStaff(UUID uuid) {
 
         //validate staff
         Staff staff = staffRepository.findStaffByUuid(uuid);
-        if(staff == null) {
+        if (staff == null) {
             throw new ServiceException("staff with uuid " + uuid + " not found ", ServiceException.STAFF_INVALID);
         }
 

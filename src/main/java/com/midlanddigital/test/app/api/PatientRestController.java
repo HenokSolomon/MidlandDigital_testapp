@@ -1,5 +1,6 @@
 package com.midlanddigital.test.app.api;
 
+import com.midlanddigital.test.app.api.model.DeletePatientRequest;
 import com.midlanddigital.test.app.domain.service.PatientService;
 import com.midlanddigital.test.app.domain.service.StaffService;
 import com.midlanddigital.test.app.dto.PatientDto;
@@ -12,9 +13,6 @@ import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RequestMapping(value = {"/patient"})
@@ -32,9 +30,18 @@ public class PatientRestController {
         this.staffService = staffService;
     }
 
+    @ValidateStaffUUID
+    @GetMapping("/findAll")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<PatientDto> findAll() {
+
+        return patientService.findAll();
+    }
+
     @ValidateStaffUUID /* custom annotation to intercept staffUUID httpHeader */
     @GetMapping("/getPatientsAgedLessThanTwoYear")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<PatientDto> getPatientsAgedLessThanTwoYear() {
 
@@ -43,41 +50,37 @@ public class PatientRestController {
 
 
     @ValidateStaffUUID /* custom annotation to intercept staffUUID httpHeader */
-    @GetMapping("/downloadPatientProfile?{from}&{to}")
-    public void downloadPatientProfile(HttpServletResponse response, @PathVariable String from, @PathVariable String to) throws IOException {
+    @GetMapping("/downloadPatientProfile/{id}")
+    public void downloadPatientProfile(HttpServletResponse response, @PathVariable int id) throws IOException {
 
-        response.setContentType("text/csv");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-        String currentDateTime = dateFormatter.format(new Date());
+        PatientDto patient = patientService.getPatientById(id);
 
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=Patients_" + currentDateTime + ".csv";
-        response.setHeader(headerKey, headerValue);
+        String headerValue = "attachment; filename=Patients_" + id + ".csv";
 
-        //fixme
-        List<PatientDto> patients = patientService.getAllPatientByAgeLessThanEqual(AGE_QUERY);
+        response.setHeader(headerKey, headerValue);
+        response.setContentType("text/csv");
 
         ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
         String[] csvHeader = {"UUID", "Name", "age", "Last Visit Date"};
         String[] nameMapping = {"uuid", "name", "age", "lastVisitDate"};
 
         csvWriter.writeHeader(csvHeader);
-
-        for (PatientDto p : patients) {
-            csvWriter.write(p, nameMapping);
-        }
+        csvWriter.write(patient == null ? new PatientDto() : patient, nameMapping);
 
         csvWriter.close();
 
     }
 
     @ValidateStaffUUID /* custom annotation to intercept staffUUID httpHeader */
-    @DeleteMapping("/delete?{from}&{to}")
+    @DeleteMapping("/delete")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public void delete(HttpServletResponse response, @PathVariable String from, @PathVariable String to) throws IOException {
+    public String delete(@RequestBody DeletePatientRequest deletePatientRequest) {
 
+        final int count = patientService.delete(deletePatientRequest.getFrom(), deletePatientRequest.getTo());
 
+        return "total number of deleted records " + count;
     }
 
 }

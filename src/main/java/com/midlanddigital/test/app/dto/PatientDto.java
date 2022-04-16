@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -15,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PatientDto {
 
+    private Integer patientId;
     private String name;
     private UUID uuid;
     private int age;

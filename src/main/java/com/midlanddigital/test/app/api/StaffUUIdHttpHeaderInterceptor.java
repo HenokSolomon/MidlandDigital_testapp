@@ -15,8 +15,8 @@ import java.util.UUID;
 @Slf4j
 public class StaffUUIdHttpHeaderInterceptor implements AsyncHandlerInterceptor {
 
-    private final StaffService staffService;
     public static final String UUID_PATTERN = "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$";
+    private final StaffService staffService;
 
     public StaffUUIdHttpHeaderInterceptor(StaffService staffService) {
         this.staffService = staffService;
@@ -25,9 +25,11 @@ public class StaffUUIdHttpHeaderInterceptor implements AsyncHandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        final ValidateStaffUUID validateStaffUUID = ((HandlerMethod)handler).getMethod().getAnnotation((ValidateStaffUUID.class));
+        if(!(handler instanceof HandlerMethod)) { return true; }
 
-        if(validateStaffUUID == null){
+        final ValidateStaffUUID validateStaffUUID = ((HandlerMethod) handler).getMethod().getAnnotation((ValidateStaffUUID.class));
+
+        if (validateStaffUUID == null) {
             return true;
         }
 
@@ -38,12 +40,19 @@ public class StaffUUIdHttpHeaderInterceptor implements AsyncHandlerInterceptor {
         }
 
         /* validated if the header value is a valid UUID string */
-        if(!staffUUID.matches(UUID_PATTERN)) {
+        if (!staffUUID.matches(UUID_PATTERN)) {
             throw new ServiceException("Invalid staff UUID", ServiceException.INVALID_STAFF_UUID_HEADER);
         }
 
-        /* check if a staff with the give UUID exists , the method throws exception if staff with that UUID doesn't exist */
-        staffService.validateStaff(UUID.fromString(staffUUID));
+        try {
+            /* check if a staff with the give UUID exists , the method throws exception if staff with that UUID doesn't exist */
+            staffService.validateStaff(UUID.fromString(staffUUID));
+        } catch (ServiceException e) {
+            throw new ServiceException("Please make sure to set Http header staffUUID parameter with a valid staff uuid " + e.getMessage()
+                    , ServiceException.INVALID_STAFF_UUID_HEADER);
+
+        }
+
 
         return true;
     }
