@@ -15,7 +15,7 @@
 
      Or simply run this command to pull the latest image tag
 
-    `docker pull hsolomondocker/midlanddigital_testapp
+    `docker pull hsolomondocker/midlanddigital_testapp`
 
     Run this command to confirm if the image is loaded to your host machine 
 
