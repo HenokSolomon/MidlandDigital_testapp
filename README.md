@@ -10,6 +10,7 @@
 
 ## How to run this app on your local environment 
 
+### Dockerized version
 
 - Pull the latest docker image from Dockerhub [here](https://hub.docker.com/r/hsolomondocker/midlanddigital_testapp)
 
